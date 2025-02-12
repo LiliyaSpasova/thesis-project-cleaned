@@ -1,0 +1,54 @@
+network "Network1" {
+// written by aGrUM 1.17.2
+}
+
+variable MC {
+   type discrete[2] {True, False};
+}
+
+variable B {
+   type discrete[2] {True, False};
+}
+
+variable ISC {
+   type discrete[2] {True, False};
+}
+
+variable C {
+   type discrete[2] {True, False};
+}
+
+variable SH {
+   type discrete[2] {True, False};
+}
+
+variable CT {
+   type discrete[2] {True, False};
+}
+
+probability (MC) {
+   table 0.2 0.8;
+}
+probability (B | MC) {
+   (True) 0.2 0.8;
+   (False) 0.05 0.95;
+}
+probability (ISC | MC) {
+   (True) 0.8 0.2;
+   (False) 0.2 0.8;
+}
+probability (C | B, ISC) {
+   (True, True) 0.8 0.2;
+   (False, True) 0.8 0.2;
+   (True, False) 0.8 0.2;
+   (False, False) 0.05 0.95;
+}
+probability (SH | B) {
+   (True) 0.8 0.2;
+   (False) 0.6 0.4;
+}
+probability (CT | B) {
+   (True) 0.95 0.05;
+   (False) 0.1 0.9;
+}
+
