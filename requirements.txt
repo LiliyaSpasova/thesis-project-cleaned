@@ -1,0 +1,8 @@
+matplotlib==3.7.1
+numpy==1.23.5
+pandas==1.5.3
+pgmpy==0.1.26
+pyAgrum==1.17.2
+pysmile==0.2
+seaborn==0.13.2
+torch==2.5.1
