@@ -249,8 +249,8 @@ def run_analysis():
     }
 
     target = {
-        'probability': ('CT', 'True'),
-        'given': None
+        'probability': ('MC', 'True'),
+        'given': [('B','True')]
     }
 
     parameters = [target,[parameter_2]]
@@ -259,8 +259,8 @@ def run_analysis():
 if __name__ == "__main__":
     #generate_random_analysis()
 
-    generate_heatmap('Brain tumor')
+    #generate_heatmap('Brain tumor')
     #for i in range(0,15):
-    #run_analysis()
+    run_analysis()
         
     

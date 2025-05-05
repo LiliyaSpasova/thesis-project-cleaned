@@ -5,7 +5,7 @@ import seaborn as sns
 
 def generate_images():
     for filename in os.listdir('heatmaps'):
-        if filename.endswith('Brain tumor.csv'):
+        if filename.endswith('.csv'):
             filepath = os.path.join('heatmaps', filename)
             
             # Load sensitivity matrix
