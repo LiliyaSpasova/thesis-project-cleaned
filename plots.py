@@ -39,7 +39,6 @@ def plot_rational_functions(plots_params,evidence_available, x_range=(0, 1),num_
     ax.set_ylim(0, 1)  
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
-    ax.set_title('Result plots')
     ax.legend()
     ax.grid(True)
 

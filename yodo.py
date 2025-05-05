@@ -37,7 +37,7 @@ def yodo(g, probability, given=None):
     # Convert state names to integers
     # Example: {'variable': 'high'} could become {'variable': 2}
     probability = {key: g.get_cpds(key).state_names[key].index(probability[key]) for key in probability}
-    if given is not None:
+    if given.__len__()>0:
         given = {key: g.get_cpds(key).state_names[key].index(given[key]) for key in given}
 
     g = g.to_markov_model()
@@ -174,8 +174,11 @@ def get_all_sensitivity_values(g, probability, given=None):
 
     results_sorted = []
     for nodes in result:
+        sens_matrix=result[nodes]['sensitivity_value']
+        #torch.transpose(sens_matrix,0,1)
         f = result[nodes]['cpt']
         idx = np.unravel_index(np.arange(f.numel()), f.shape)
+        reversed_idx = tuple(np.flip(i) for i in idx)
         for i in range(len(idx[0])):
             cond = ['{} = {}'.format(f.names[j], idx[j][i]) for j in range(len(idx))]
             if len(cond) == 1:
@@ -184,7 +187,6 @@ def get_all_sensitivity_values(g, probability, given=None):
                 name = cond[0] + ' | ' + ', '.join(cond[1:])
             results_sorted.append([
                 name,
-                f[tuple(index[i] for index in idx)].item(),
-                result[nodes]['sensitivity_value'][tuple(index[i] for index in idx)].item(),
+                sens_matrix[tuple(index[i] for index in reversed_idx)].item(),
             ])
     return results_sorted

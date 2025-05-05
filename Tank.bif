@@ -1,0 +1,135 @@
+network "Tank" {
+// written by aGrUM 1.17.2
+}
+
+variable Oxigen {
+   type discrete[2] {present, absent};
+}
+
+variable Hydrogen {
+   type discrete[2] {presen, absent};
+}
+
+variable ReacO {
+   type discrete[2] {yes, no};
+}
+
+variable ReacH {
+   type discrete[2] {yes, no};
+}
+
+variable Sensor1 {
+   type discrete[2] {on, off};
+}
+
+variable Explosion {
+   type discrete[2] {yes, no};
+}
+
+variable Sensor2 {
+   type discrete[2] {on, off};
+}
+
+variable C_Oxigen {
+   type discrete[2] {present, absent};
+}
+
+variable C_Hydrogen {
+   type discrete[2] {present, absent};
+}
+
+variable C_ReacO {
+   type discrete[2] {yes, no};
+}
+
+variable C_ReacH {
+   type discrete[2] {yes, no};
+}
+
+variable C_Sensor1 {
+   type discrete[2] {on, off};
+}
+
+variable C_Sensor2 {
+   type discrete[2] {on, off};
+}
+
+variable C_Explosion {
+   type discrete[2] {yes, no};
+}
+
+probability (Oxigen) {
+   table 0.5 0.5;
+}
+probability (Hydrogen) {
+   table 0.5 0.5;
+}
+probability (ReacO | Oxigen) {
+   (present) 0.1 0.9;
+   (absent) 0 1;
+}
+probability (ReacH | Hydrogen) {
+   (presen) 0.1 0.9;
+   (absent) 0 1;
+}
+probability (Sensor1 | Oxigen, Hydrogen) {
+   (present, presen) 0.9 0.1;
+   (absent, presen) 0.1 0.9;
+   (present, absent) 0.1 0.9;
+   (absent, absent) 0.9 0.1;
+}
+probability (Explosion | Oxigen, Hydrogen) {
+   (present, presen) 0.9 0.1;
+   (absent, presen) 0 1;
+   (present, absent) 0 1;
+   (absent, absent) 0 1;
+}
+probability (Sensor2 | Oxigen) {
+   (present) 0.9 0.1;
+   (absent) 0.1 0.9;
+}
+probability (C_Oxigen | Oxigen, Explosion, ReacO) {
+   (present, yes, yes) 0 1;
+   (absent, yes, yes) 0 1;
+   (present, no, yes) 0 1;
+   (absent, no, yes) 1 0;
+   (present, yes, no) 0 1;
+   (absent, yes, no) 0 1;
+   (present, no, no) 0 1;
+   (absent, no, no) 0 1;
+}
+probability (C_Hydrogen | Hydrogen, ReacH, Explosion) {
+   (presen, yes, yes) 0 1;
+   (absent, yes, yes) 0 1;
+   (presen, no, yes) 0 1;
+   (absent, no, yes) 1 0;
+   (presen, yes, no) 0 1;
+   (absent, yes, no) 0 1;
+   (presen, no, no) 0 1;
+   (absent, no, no) 0 1;
+}
+probability (C_ReacO | C_Oxigen) {
+   (present) 0.1 0.9;
+   (absent) 0 1;
+}
+probability (C_ReacH | C_Hydrogen) {
+   (present) 0.1 0.9;
+   (absent) 0 1;
+}
+probability (C_Sensor1 | C_Oxigen, C_Hydrogen) {
+   (present, present) 0.9 0.1;
+   (absent, present) 0.1 0.9;
+   (present, absent) 0.1 0.9;
+   (absent, absent) 0.9 0.1;
+}
+probability (C_Sensor2 | C_Oxigen) {
+   (present) 0.9 0.1;
+   (absent) 0.1 0.9;
+}
+probability (C_Explosion | C_Oxigen, C_Hydrogen) {
+   (present, present) 0.9 0.1;
+   (absent, present) 0 1;
+   (present, absent) 0 1;
+   (absent, absent) 0 1;
+}
+

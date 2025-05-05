@@ -13,6 +13,7 @@ import yodo
 import pandas as pd
 import seaborn as sns
 from derive_senstivity_function import *
+import os
 
 #probability={'CVP': 'HIGH'}, given={'HISTORY': 'TRUE'}
 
@@ -157,21 +158,21 @@ def sample_params(grouped_params, marginal_outcomes, num_samples=5):
 
     return results
 
-def get_sensitivity_values(net, yodo_params,marignal_outcomes):
+def get_sensitivity_values(net, yodo_params,marginal_outcomes):
     num_params = len(yodo_params)
     
     # Initialize an empty DataFrame for storing sensitivity values
     sensitivity_matrix = pd.DataFrame(
         np.zeros(( len(marginal_outcomes),num_params)),  # Matrix of zeros
-        index=[p[0] for p in marignal_outcomes],  # Row names = prob params
+        index=[p[0] for p in marginal_outcomes],  # Row names = prob params
         columns=[p[0] for p in yodo_params]  # Column names = given params
     )
 
     # Compute sensitivity for each (prob, given) pair
-    for name_x,prob in marignal_outcomes:
-        sens_vals = yodo.get_all_sensitivity_values(net,prob)  # Returns 26 values
+    for name_x,prob in marginal_outcomes:
+        sens_vals = yodo.get_all_sensitivity_values(net,prob['probability'],prob['given'])  # Returns 26 values
         
-        for (name_y,_,val) in sens_vals:
+        for (name_y,val) in sens_vals:
             sensitivity_matrix.at[name_x, name_y] = val
     
     return sensitivity_matrix
@@ -198,38 +199,6 @@ def serealize(params):
         res.append((parameters,tuple(par['target'].items())))
     return res
 
-
-
-
-    
-"""
-analysis=yodo(net_bif,{'C':'True'})
-
-plot(net_bif,{'C':'True'})
-print(analysis)
-sv = analysis[('B','MC')]['derivative']
-
-print(sv)
-"""
-
-"""
-
-sensitivity_matrix = get_sensitivity_values(net_bif, yodo_params,marginal_outcomes)
-
-sensitivity_matrix.to_csv("sensitivity_matrix.csv", index=True)
-
-
-# Plot heatmap
-plt.figure(figsize=(12, 8))
-sns.heatmap(sensitivity_matrix, cmap="coolwarm", annot=True, fmt=".2f", linewidths=0.8)
-
-# Labels and title
-plt.title("Sensitivity Analysis Heatmap")
-plt.xlabel("Given Parameter")
-plt.ylabel("Prob Parameter")
-plt.show()
-"""
-#print(marginal_outcomes)
 def generate_random_analysis():
     net_xdls = pysmile.Network()
             
@@ -245,45 +214,53 @@ def generate_random_analysis():
     for par in params:
         get_all_funtions(net_xdls,par)
 
-def show_heatmap():
+def generate_heatmap(network_name):
     net_xdls = pysmile.Network()
             
     net_xdls.read_file("Brain_Tumor_original.xdsl")
 
     all_condition_probabilties=get_all_params_for_yodo(net_xdls)
 
-    marginal_outcomes=get_all_marginal_outcomes(net_xdls,[('C','True')])
+    marginal_outcomes=get_all_marginal_outcomes(net_xdls)
     net_bif=pgmpy.readwrite.BIFReader("Brain_Tumor_original.bif").get_model()
     sensitivity_matrix = get_sensitivity_values(net_bif, all_condition_probabilties,marginal_outcomes)
+    sensitivity_matrix.to_csv(f"heatmaps/{network_name}.csv", index=True)
+    for o in marginal_outcomes:
+        evidence=o[1]['probability']
+        if isinstance(evidence, dict):
+            evidence = [evidence]
+        evidence_list = [item for d in evidence for item in d.items()]
+        marginal_outcomes_with_evidence=get_all_marginal_outcomes(net_xdls,evidence_list)
+        sensitivity_matrix = get_sensitivity_values(net_bif, all_condition_probabilties,marginal_outcomes_with_evidence)
+        sensitivity_matrix.to_csv(f"heatmaps/{network_name}_{o[0]}.csv", index=True)
 
-    sensitivity_matrix.to_csv("sensitivity_matrix.csv", index=True)
-
-
-    # Plot heatmap
-    plt.figure(figsize=(12, 8))
-    sns.heatmap(sensitivity_matrix, cmap="coolwarm", annot=True, fmt=".2f", linewidths=0.8)
-
-    # Labels and title
-    plt.title("Sensitivity Analysis Heatmap")
-    plt.xlabel("Given Parameter")
-    plt.ylabel("Prob Parameter")
-    plt.show()
 def run_analysis():
     net_xdls = pysmile.Network()
             
     net_xdls.read_file("Brain_Tumor_original.xdsl")
-    parameter_1 = {'probability': ('B', 'True'), 'given': [('MC', 'True')]}
-    parameter_2 = {'probability': ('ISC', 'True'), 'given': [('MC', 'True')]}
-    target = {'probability': ('C', 'True'),'given':None}
+   # parameter_1 = {
+  #  'probability': ('B', 'True'),
+  #  'given': [('MC', 'False')]
+  #  }
 
-    parameters = [target,[parameter_1,parameter_2]]
+    parameter_2 = {
+        'probability': ('B', 'False'),
+        'given': [('MC','False')]
+    }
+
+    target = {
+        'probability': ('CT', 'True'),
+        'given': None
+    }
+
+    parameters = [target,[parameter_2]]
     get_all_funtions(net_xdls,parameters)
 
 if __name__ == "__main__":
     #generate_random_analysis()
 
-    #show_heatmap()
-    for i in range(0,15):
-        run_analysis()
+    generate_heatmap('Brain tumor')
+    #for i in range(0,15):
+    #run_analysis()
         
     

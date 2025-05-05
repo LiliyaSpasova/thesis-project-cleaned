@@ -36,7 +36,10 @@ def update_cpt_with_epsilon(net,parameters,target,num_variations):
                 net.set_evidence(key,value)
         net.update_beliefs()
         beliefs = net.get_node_value(target_node_name)
-        coordinates.append(beliefs[0])
+        if target_node_value=='False':
+            coordinates.append(beliefs[1])
+        else:
+            coordinates.append(beliefs[0])
         res.append(tuple(coordinates))## change this beliefs index to 1 if the target value is false
     return res
 
@@ -122,8 +125,17 @@ def generate_labels(parameters, target):
             labels.append(f'P({prob_var})')
     
     # Handle target separately
-    target_var = target['probability'][0]
-    labels.append(f'P({target_var})')
+    if target['probability'][1]=='True':
+        target_var = target['probability'][0]  # Extract the variable being conditioned
+    else: 
+        target_var = '-' + target['probability'][0]
+    target_vars = target.get('given', [])  # Extract the conditions, if any
+        
+    if target_vars:
+        given_str = '^'.join([gv[0] if gv[1] == 'True' else '-' + gv[0] for gv in target_vars])
+        labels.append(f'P({target_var}|{given_str})')
+    else:
+        labels.append(f'P({target_var})')
     
     return labels
 
@@ -154,8 +166,8 @@ def plot(parameters,points,evidence_available,labels,ax1,ax2=None):
             plots_params.append(solve_system(coefficients))
         else:
             plots_params.append(solve_system_without_evidence(coefficients,b))
-        print(solve_system_without_evidence(coefficients,b))
-        #plot_3d_rational_functions(plots_params=plots_params,evidence_available=evidence_available,labels=labels,ax1=ax1,ax2=ax2)
+        print(solve_system(coefficients))
+        plot_3d_rational_functions(plots_params=plots_params,evidence_available=evidence_available,labels=labels,ax1=ax1,ax2=ax2)
 
 
 def get_all_funtions(net,params):
@@ -212,5 +224,5 @@ def get_all_funtions(net,params):
     points=round_point_values(points)
     plot(parameters,points,evidence_available,labels,ax1=ax_3d,ax2=axes[1,1])
     plt.tight_layout()  # Adjust layout for better visibility
-    #plt.show()
+    plt.show()
     return
