@@ -238,29 +238,29 @@ def run_analysis():
     net_xdls = pysmile.Network()
             
     net_xdls.read_file("Brain_Tumor_original.xdsl")
-   # parameter_1 = {
-  #  'probability': ('B', 'True'),
-  #  'given': [('MC', 'False')]
-  #  }
+    parameter_1 = {
+    'probability': ('ISC', 'False'),
+    'given': [('MC', 'False')]
+    }
 
     parameter_2 = {
-        'probability': ('B', 'False'),
-        'given': [('MC','False')]
+        'probability': ('C', 'False'),
+        'given': [('B','False'),('ISC','False')]
     }
 
     target = {
-        'probability': ('MC', 'True'),
-        'given': [('B','True')]
+        'probability': ('CT', 'True'),
+        'given': None
     }
 
-    parameters = [target,[parameter_2]]
+    parameters = [target,[parameter_1,parameter_2]]
     get_all_funtions(net_xdls,parameters)
 
 if __name__ == "__main__":
-    #generate_random_analysis()
+    generate_random_analysis()
 
     #generate_heatmap('Brain tumor')
     #for i in range(0,15):
-    run_analysis()
+    #run_analysis()
         
     
