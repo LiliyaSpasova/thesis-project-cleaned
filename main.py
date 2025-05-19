@@ -27,13 +27,13 @@ def format_probability(prob_dict):
     """
     # Convert probability part (assumes single key-value pair)
     prob_var, prob_value = list(prob_dict['probability'].items())[0]
-    prob_value = "0" if prob_value == "False" else "1"
+    prob_value = "0" if prob_value.lower() in ["false", "no", "absent", "off"] else "1"
 
     # Convert given conditions (if any)
     given_conditions = []
     if 'given' in prob_dict and prob_dict['given']:
         for var, value in prob_dict['given'].items():
-            given_conditions.append(f"{var}={'0' if value == 'False' else '1'}")
+            given_conditions.append(f"{var}={'0' if value.lower() in ['false', 'no', 'absent', 'off'] else '1'}")
 
     # Construct the final probability string
     if given_conditions:
@@ -217,12 +217,12 @@ def generate_random_analysis():
 def generate_heatmap(network_name):
     net_xdls = pysmile.Network()
             
-    net_xdls.read_file("Brain_Tumor_original.xdsl")
+    net_xdls.read_file("Tank.xdsl")
 
     all_condition_probabilties=get_all_params_for_yodo(net_xdls)
 
     marginal_outcomes=get_all_marginal_outcomes(net_xdls)
-    net_bif=pgmpy.readwrite.BIFReader("Brain_Tumor_original.bif").get_model()
+    net_bif=pgmpy.readwrite.BIFReader("Tank.bif").get_model()
     sensitivity_matrix = get_sensitivity_values(net_bif, all_condition_probabilties,marginal_outcomes)
     sensitivity_matrix.to_csv(f"heatmaps/{network_name}.csv", index=True)
     for o in marginal_outcomes:
@@ -237,30 +237,30 @@ def generate_heatmap(network_name):
 def run_analysis():
     net_xdls = pysmile.Network()
             
-    net_xdls.read_file("Brain_Tumor_original.xdsl")
+    net_xdls.read_file("Tank.xdsl")
     parameter_1 = {
-    'probability': ('ISC', 'False'),
-    'given': [('MC', 'False')]
+    'probability': ('Oxigen', 'present'),
+    'given': None
     }
 
     parameter_2 = {
-        'probability': ('C', 'False'),
-        'given': [('B','False'),('ISC','False')]
+        'probability': ('C_Hydrogen', 'absent'),
+        'given': [('Hydrogen','absent'),('ReacH','no'),('Explosion','no')]
     }
 
     target = {
-        'probability': ('CT', 'True'),
-        'given': None
+        'probability': ('ReacO', 'yes'),
+        'given': [('C_Sensor1','off')]
     }
 
     parameters = [target,[parameter_1,parameter_2]]
     get_all_funtions(net_xdls,parameters)
 
 if __name__ == "__main__":
-    generate_random_analysis()
+    #generate_random_analysis()
 
-    #generate_heatmap('Brain tumor')
+    #generate_heatmap('Tank')
     #for i in range(0,15):
-    #run_analysis()
+    run_analysis()
         
     

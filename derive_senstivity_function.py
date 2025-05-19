@@ -14,8 +14,7 @@ def update_cpt_with_epsilon(net,parameters,target,num_variations):
     value_combinations=generate_value_combinations(parameters.__len__(),num_variations)
     print(value_combinations)
     target_node_name, target_node_value = target['probability']
-    target_node_distribution=get_distribution(net,target)
-
+    target_cpt_dict= get_cpt_dict(net, net.get_node(target_node_name))
 
     parameters_info =extract_parameters_info(net,parameters)
     for variation in value_combinations:
@@ -36,11 +35,13 @@ def update_cpt_with_epsilon(net,parameters,target,num_variations):
                 net.set_evidence(key,value)
         net.update_beliefs()
         beliefs = net.get_node_value(target_node_name)
-        if target_node_value=='False':
+        falsy_values = ['false', 'off', 'no', 'absent']
+
+        if target_node_value.lower() in falsy_values:
             coordinates.append(beliefs[1])
         else:
             coordinates.append(beliefs[0])
-        res.append(tuple(coordinates))## change this beliefs index to 1 if the target value is false
+        res.append(tuple(coordinates))
     return res
 
 def round_point_values(values):
@@ -73,9 +74,15 @@ def extract_parameters_info(net,parameters):
         # Generate all combinations for the current node
         cpt = net.get_node_definition(parameter_node_name)  # Placeholder function call
         distribution = get_distribution(net, parameter)    # Placeholder function call
-        _, true_index = distribution['True']
-        _, false_index = distribution['False']
-        
+        truthy_values = ['true', 'on', 'yes', 'present']
+        falsy_values = ['false', 'off', 'no', 'absent']
+
+        # Normalize the keys in the distribution for lookup
+        normalized_distribution = {key.lower(): value for key, value in distribution.items()}
+
+        _, true_index = next((v for k, v in normalized_distribution.items() if k in truthy_values), (None, None))
+        _, false_index = next((v for k, v in normalized_distribution.items() if k in falsy_values), (None, None))
+
         # Save structured data for each combination
         structured_data.append({
                 'name': parameter_node_name,
@@ -104,40 +111,49 @@ def generate_value_combinations(num_parameters,num_combinations):
     selected_combinations = random.sample(all_combinations, num_combinations)
     
     return selected_combinations
-
 def generate_labels(parameters, target):
     labels = []
-    
+    truthy_values = ['on', 'true', 'present', 'yes']
+
     if isinstance(parameters, dict):
         parameters = [parameters]
 
     for param in parameters:
-        if param['probability'][1]=='True':
-            prob_var = param['probability'][0]  # Extract the variable being conditioned
-        else: 
+        if param['probability'][1].lower() in truthy_values:
+            prob_var = param['probability'][0]
+        else:
             prob_var = '-' + param['probability'][0]
-        given_vars = param.get('given', [])  # Extract the conditions, if any
+        
+        given_vars = param.get('given', [])
         
         if given_vars:
-            given_str = '^'.join([gv[0] if gv[1] == 'True' else '-' + gv[0] for gv in given_vars])
+            given_str = '^'.join([
+                gv[0] if gv[1].lower() in truthy_values else '-' + gv[0]
+                for gv in given_vars
+            ])
             labels.append(f'P({prob_var}|{given_str})')
         else:
             labels.append(f'P({prob_var})')
-    
+
     # Handle target separately
-    if target['probability'][1]=='True':
-        target_var = target['probability'][0]  # Extract the variable being conditioned
-    else: 
+    if target['probability'][1].lower() in truthy_values:
+        target_var = target['probability'][0]
+    else:
         target_var = '-' + target['probability'][0]
-    target_vars = target.get('given', [])  # Extract the conditions, if any
-        
+    
+    target_vars = target.get('given', [])
+    
     if target_vars:
-        given_str = '^'.join([gv[0] if gv[1] == 'True' else '-' + gv[0] for gv in target_vars])
+        given_str = '^'.join([
+            gv[0] if gv[1].lower() in truthy_values else '-' + gv[0]
+            for gv in target_vars
+        ])
         labels.append(f'P({target_var}|{given_str})')
     else:
         labels.append(f'P({target_var})')
-    
+
     return labels
+
 
 def plot(parameters,points,evidence_available,labels,ax1,ax2=None):
     
