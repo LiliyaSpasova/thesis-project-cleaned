@@ -74,7 +74,7 @@ def extract_parameters_info(net,parameters):
         # Generate all combinations for the current node
         cpt = net.get_node_definition(parameter_node_name)  # Placeholder function call
         distribution = get_distribution(net, parameter)    # Placeholder function call
-        truthy_values = ['true', 'on', 'yes', 'present']
+        truthy_values = ['true', 'on', 'yes', 'present','presen']
         falsy_values = ['false', 'off', 'no', 'absent']
 
         # Normalize the keys in the distribution for lookup
@@ -155,7 +155,7 @@ def generate_labels(parameters, target):
     return labels
 
 
-def plot(parameters,points,evidence_available,labels,ax1,ax2=None):
+def plot(parameters,points,evidence_available,labels,ax1,ax2=None,plots=True):
     
     if isinstance(parameters, dict):
         parameters = [parameters]
@@ -172,7 +172,10 @@ def plot(parameters,points,evidence_available,labels,ax1,ax2=None):
             plots_params.append(solve_system(coefficients))
         else:
             plots_params.append(solve_system_without_evidence(coefficients,b))
-        plot_rational_functions(plots_params=round_plot_params(plots_params),evidence_available=evidence_available,labels=labels,ax=ax1)
+        if plots:
+            plot_rational_functions(plots_params=round_plot_params(plots_params),evidence_available=evidence_available,labels=labels,ax=ax1)
+        else:
+            return (plots_params,labels)
     else:
         for (x,y,z) in points:
             coefficients.append(coefficient_calculator.get_coefficients_2_way(x,y,z,evidence_available))
@@ -182,12 +185,13 @@ def plot(parameters,points,evidence_available,labels,ax1,ax2=None):
             plots_params.append(solve_system(coefficients))
         else:
             plots_params.append(solve_system_without_evidence(coefficients,b))
-        print(solve_system(coefficients))
-        plot_3d_rational_functions(plots_params=plots_params,evidence_available=evidence_available,labels=labels,ax1=ax1,ax2=ax2)
+        if plots:
+            plot_3d_rational_functions(plots_params=plots_params,evidence_available=evidence_available,labels=labels,ax1=ax1,ax2=ax2)
+        else:
+            return (plots_params,labels)
 
-
-def get_all_funtions(net,params):
-        
+def get_all_funtions(net,params,plots):
+    all_values=[]
     # Example usage:
     """parameter_1 = {'probability': ('ISC', 'False'),'given':[('MC','False'),('SH','True')]}
     target = {'probability': ('ISC', 'True')}
@@ -207,10 +211,13 @@ def get_all_funtions(net,params):
 
         points=update_cpt_with_epsilon(net,parameters,target,needed_variations)
         points=round_point_values(points)
-        plot(parameters,points,evidence_available,labels,ax1=axes)
-        plt.tight_layout()  # Adjust layout for better visibility
-        plt.show()
-        return
+        if plots:
+            plot(parameters,points,evidence_available,labels,ax1=axes)
+            plt.tight_layout()  # Adjust layout for better visibility
+            plt.show()
+            return
+        else:
+            all_values.append( plot(parameters,points,evidence_available,labels,ax1=axes,plots=plots))
 
     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 10))
 
@@ -230,15 +237,21 @@ def get_all_funtions(net,params):
 
         points=update_cpt_with_epsilon(net,p,target,needed_variations)
         points=round_point_values(points)
-        plot(p,points,evidence_available,labels,ax1=axes[0,i])
-   
+        if plots:           
+            plot(p,points,evidence_available,labels,ax1=axes[0,i])
+        else:
+            all_values.append( plot(p,points,evidence_available,labels,ax1=axes[0,i],plots=plots))
     labels = generate_labels(parameters, target)
 
     needed_variations=calculate_variations_needed(parameters,target)
 
     points=update_cpt_with_epsilon(net,parameters,target,needed_variations)
     points=round_point_values(points)
-    plot(parameters,points,evidence_available,labels,ax1=ax_3d,ax2=axes[1,1])
-    plt.tight_layout()  # Adjust layout for better visibility
-    plt.show()
-    return
+    if plots:
+        plot(parameters,points,evidence_available,labels,ax1=ax_3d,ax2=axes[1,1],plots=plots)
+        plt.tight_layout()  # Adjust layout for better visibility
+        plt.show()
+        return
+    else:
+        all_values.append(plot(parameters,points,evidence_available,labels,ax1=ax_3d,ax2=axes[1,1],plots=plots))
+        return all_values

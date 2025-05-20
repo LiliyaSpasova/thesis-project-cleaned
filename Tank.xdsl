@@ -7,7 +7,7 @@
 			<probabilities>0.5 0.5</probabilities>
 		</cpt>
 		<cpt id="Hydrogen">
-			<state id="presen" />
+			<state id="present" />
 			<state id="absent" />
 			<probabilities>0.5 0.5</probabilities>
 		</cpt>

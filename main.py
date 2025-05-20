@@ -14,6 +14,7 @@ import pandas as pd
 import seaborn as sns
 from derive_senstivity_function import *
 import os
+from show_table import *
 
 #probability={'CVP': 'HIGH'}, given={'HISTORY': 'TRUE'}
 
@@ -212,7 +213,7 @@ def generate_random_analysis():
     params=sample_params(grouped_by_distributions,marginal_outcomes,10)
     #{'probability': ('ISC', 'False'),'given':[('MC','False'),('SH','True')]}
     for par in params:
-        get_all_funtions(net_xdls,par)
+       return get_all_funtions(net_xdls,par,plots=False)
 
 def generate_heatmap(network_name):
     net_xdls = pysmile.Network()
@@ -234,10 +235,13 @@ def generate_heatmap(network_name):
         sensitivity_matrix = get_sensitivity_values(net_bif, all_condition_probabilties,marginal_outcomes_with_evidence)
         sensitivity_matrix.to_csv(f"heatmaps/{network_name}_{o[0]}.csv", index=True)
 
-def run_analysis():
+def run_analysis(network,plots=True):
     net_xdls = pysmile.Network()
-            
-    net_xdls.read_file("Tank.xdsl")
+    if network=='Tank':
+        net_xdls.read_file("Tank.xdsl")
+    elif network=='Brain_tumor':    
+        net_xdls.read_file("Brain_Tumor_original.xdsl")
+    """
     parameter_1 = {
     'probability': ('Oxigen', 'present'),
     'given': None
@@ -252,15 +256,31 @@ def run_analysis():
         'probability': ('ReacO', 'yes'),
         'given': [('C_Sensor1','off')]
     }
+    """
+    parameter_1 = {
+        'probability': ('Hydrogen', 'absent'),
+    }
 
+    parameter_2 = {
+        'probability': ('Explosion', 'yes'),
+        'given': [('Oxigen', 'absent'),('Hydrogen', 'absent')]
+    }
+
+    target = {
+        'probability': ('ReacH', 'no'),
+        'given':[('Sensor2','off')]
+    }
     parameters = [target,[parameter_1,parameter_2]]
-    get_all_funtions(net_xdls,parameters)
+    return get_all_funtions(net_xdls,parameters,plots)
+    
 
 if __name__ == "__main__":
-    #generate_random_analysis()
-
+    params=[]
     #generate_heatmap('Tank')
-    #for i in range(0,15):
-    run_analysis()
-        
+    for i in range(0,15):
+        params.append(generate_random_analysis())
+
+   # res=run_analysis('Tank',plots=False)
+    df=format_sensitivity_table_list(params)
+    save_table_as_image(df, "sensitivity_table.png")
     
