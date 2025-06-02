@@ -1,0 +1,90 @@
+Target: MC = True | Given: ISC = True
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.4250
+---
+Target: MC = False | Given: ISC = True
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.4250
+---
+Target: C = True | Given: ISC = True
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.4250
+---
+Target: C = False | Given: ISC = True
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.4250
+---
+Target: SH = True | Given: ISC = True
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.4250
+---
+Target: SH = False | Given: ISC = True
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.4250
+---
+Target: MC = True | Given: C = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.2141
+---
+Target: MC = False | Given: C = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.2141
+---
+Target: ISC = True | Given: C = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.2141
+---
+Target: ISC = False | Given: C = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.2141
+---
+Target: SH = True | Given: C = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.2141
+---
+Target: SH = False | Given: C = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.2141
+---
+Target: MC = True | Given: SH = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.3689
+---
+Target: MC = False | Given: SH = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.3689
+---
+Target: ISC = True | Given: SH = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.3689
+---
+Target: ISC = False | Given: SH = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.3689
+---
+Target: C = True | Given: SH = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.3689
+---
+Target: C = False | Given: SH = False
+Param1: P(B = True) | MC = False
+Param2: P(CT = False) | B = False
+Value: 0.3689
+---

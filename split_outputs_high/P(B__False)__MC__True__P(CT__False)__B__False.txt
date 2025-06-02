@@ -1,0 +1,30 @@
+Target: ISC = True | Given: MC = True
+Param1: P(B = False) | MC = True
+Param2: P(CT = False) | B = False
+Value: 0.8500
+---
+Target: ISC = False | Given: MC = True
+Param1: P(B = False) | MC = True
+Param2: P(CT = False) | B = False
+Value: 0.8500
+---
+Target: C = True | Given: MC = True
+Param1: P(B = False) | MC = True
+Param2: P(CT = False) | B = False
+Value: 0.8500
+---
+Target: C = False | Given: MC = True
+Param1: P(B = False) | MC = True
+Param2: P(CT = False) | B = False
+Value: 0.8500
+---
+Target: SH = True | Given: MC = True
+Param1: P(B = False) | MC = True
+Param2: P(CT = False) | B = False
+Value: 0.8500
+---
+Target: SH = False | Given: MC = True
+Param1: P(B = False) | MC = True
+Param2: P(CT = False) | B = False
+Value: 0.8500
+---

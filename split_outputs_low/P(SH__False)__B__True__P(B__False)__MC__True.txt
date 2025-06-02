@@ -1,0 +1,120 @@
+Target: MC = True | Given: C = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: MC = False | Given: C = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: ISC = True | Given: C = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: ISC = False | Given: C = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: CT = True | Given: C = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: CT = False | Given: C = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: MC = True | Given: C = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: MC = False | Given: C = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: ISC = True | Given: C = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: ISC = False | Given: C = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: CT = True | Given: C = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: CT = False | Given: C = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: MC = True | Given: CT = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: MC = False | Given: CT = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: ISC = True | Given: CT = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: ISC = False | Given: CT = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: C = True | Given: CT = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: C = False | Given: CT = True
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: MC = True | Given: CT = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: MC = False | Given: CT = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: ISC = True | Given: CT = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: ISC = False | Given: CT = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: C = True | Given: CT = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---
+Target: C = False | Given: CT = False
+Param1: P(SH = False) | B = True
+Param2: P(B = False) | MC = True
+Value: 0.0000
+---

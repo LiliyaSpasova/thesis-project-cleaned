@@ -1,6 +1,7 @@
 from collections import defaultdict
 import pysmile
 from generate_all_analysis import filter_all_parameter_pairs, filter_all_parameter_pairs_by_sensitivity_values, sample_params_all
+from load_params import load_params
 import pysmile_license
 import coefficient_calculator
 import numpy as np
@@ -215,11 +216,7 @@ def generate_random_analysis():
     #{'probability': ('ISC', 'False'),'given':[('MC','False'),('SH','True')]}
     for par in params:
        return get_all_functions(net_xdls,par,plots=False)
-def generate_all_analysis():
-    res=[]
-    net_xdls = pysmile.Network()
-            
-    net_xdls.read_file("Brain_Tumor_original.xdsl")
+def generate_all_analysis(net_xdls):
 
     all_condition_probabilties=get_all_params_for_yodo(net_xdls)
     marginal_outcomes_with_evidence=[]
@@ -233,11 +230,8 @@ def generate_all_analysis():
     all_marginal_oucomes=marginal_outcomes+marginal_outcomes_with_evidence
     grouped_by_distributions=group_param_by_distributions(all_condition_probabilties)
     params=sample_params_all(grouped_by_distributions,all_marginal_oucomes)
-    params=filter_all_parameter_pairs(params)[:1000]
+    params=filter_all_parameter_pairs(params)
     params=filter_all_parameter_pairs_by_sensitivity_values(params)
-    for par in params:
-       res.append( get_all_functions(net_xdls,par,plots=False))
-    return res
 
 def generate_heatmap(network_name):
     net_xdls = pysmile.Network()
@@ -306,12 +300,15 @@ if __name__ == "__main__":
     for i in range(0,15):
         params.append(generate_random_analysis())
     """
-    params=generate_all_analysis()
-   # res=run_analysis('Tank',plots=False)
-    top_params = params[:100]
-
-    # Format the selected parameters
-    df = format_sensitivity_table_list(top_params)
+    
+    net_xdls = pysmile.Network()
+    net_xdls.read_file("Brain_Tumor_original.xdsl")
+    generate_all_analysis(net_xdls)
+    functions=[]
+    params=load_params('filtered_results\high.txt')
+    for par in params:
+       functions.append(get_all_functions(net_xdls,par,plots=False))
+    df = format_sensitivity_table_list(functions)
 
     # Save as CSV
     df.to_csv("sensitivity_table.csv", index=False)

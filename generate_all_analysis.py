@@ -91,10 +91,8 @@ def filter_all_parameter_pairs_by_sensitivity_values(results):
     Each category is saved to a separate text file.
     """
     import os
-
     param1_labels = set()
     param2_node_labels = set()
-    filtered = []
 
     # Prepare file handles
     os.makedirs("filtered_results", exist_ok=True)
@@ -157,20 +155,17 @@ def filter_all_parameter_pairs_by_sensitivity_values(results):
         # Save to appropriate file
         if 0 < value < 0.1:
             low_file.write(line)
-        elif 0.1 <= value <= 0.6:
+        elif 0.1 <= value <= 0.5:
             mid_file.write(line)
-        elif value > 0.6:
+        elif value > 0.5:
             high_file.write(line)
 
-        # Add to filtered result if needed later
-        filtered.append((target, params, value))
 
     # Close all files
     low_file.close()
     mid_file.close()
     high_file.close()
 
-    return filtered
 
 
 
