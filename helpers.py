@@ -81,4 +81,4 @@ def generate_tank_heatmaps():
             plt.savefig(image_path, dpi=300)
             plt.close()
 
-generate_tank_heatmaps()
+generate_images()

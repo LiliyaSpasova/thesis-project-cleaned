@@ -1,5 +1,6 @@
 from collections import defaultdict
 import pysmile
+from generate_all_analysis import filter_all_parameter_pairs, filter_all_parameter_pairs_by_sensitivity_values, sample_params_all
 import pysmile_license
 import coefficient_calculator
 import numpy as np
@@ -34,13 +35,13 @@ def format_probability(prob_dict):
     given_conditions = []
     if 'given' in prob_dict and prob_dict['given']:
         for var, value in prob_dict['given'].items():
-            given_conditions.append(f"{var}={'0' if value.lower() in ['false', 'no', 'absent', 'off'] else '1'}")
+            given_conditions.append(f"{var} = {'0' if value.lower() in ['false', 'no', 'absent', 'off'] else '1'}")
 
     # Construct the final probability string
     if given_conditions:
-        return f"({prob_var}={prob_value}|{', '.join(given_conditions)})"
+        return f"{prob_var} = {prob_value} | {', '.join(given_conditions)}"
     else:
-        return f"({prob_var}={prob_value})"
+        return f"{prob_var} = {prob_value}"
 
 
 def get_all_params_for_yodo(net):
@@ -210,20 +211,43 @@ def generate_random_analysis():
     marginal_outcomes=get_all_marginal_outcomes(net_xdls,[('C','True')])
         
     grouped_by_distributions=group_param_by_distributions(all_condition_probabilties)
-    params=sample_params(grouped_by_distributions,marginal_outcomes,10)
+    params=sample_params_all(grouped_by_distributions,marginal_outcomes)
     #{'probability': ('ISC', 'False'),'given':[('MC','False'),('SH','True')]}
     for par in params:
-       return get_all_funtions(net_xdls,par,plots=False)
+       return get_all_functions(net_xdls,par,plots=False)
+def generate_all_analysis():
+    res=[]
+    net_xdls = pysmile.Network()
+            
+    net_xdls.read_file("Brain_Tumor_original.xdsl")
+
+    all_condition_probabilties=get_all_params_for_yodo(net_xdls)
+    marginal_outcomes_with_evidence=[]
+    marginal_outcomes=get_all_marginal_outcomes(net_xdls)
+    for o in marginal_outcomes:
+        evidence=o[1]['probability']
+        if isinstance(evidence, dict):
+            evidence = [evidence]
+        evidence_list = [item for d in evidence for item in d.items()]
+        marginal_outcomes_with_evidence.extend(get_all_marginal_outcomes(net_xdls,evidence_list))
+    all_marginal_oucomes=marginal_outcomes+marginal_outcomes_with_evidence
+    grouped_by_distributions=group_param_by_distributions(all_condition_probabilties)
+    params=sample_params_all(grouped_by_distributions,all_marginal_oucomes)
+    params=filter_all_parameter_pairs(params)[:1000]
+    params=filter_all_parameter_pairs_by_sensitivity_values(params)
+    for par in params:
+       res.append( get_all_functions(net_xdls,par,plots=False))
+    return res
 
 def generate_heatmap(network_name):
     net_xdls = pysmile.Network()
             
-    net_xdls.read_file("Tank.xdsl")
+    net_xdls.read_file("Brain_tumor_original.xdsl")
 
     all_condition_probabilties=get_all_params_for_yodo(net_xdls)
 
     marginal_outcomes=get_all_marginal_outcomes(net_xdls)
-    net_bif=pgmpy.readwrite.BIFReader("Tank.bif").get_model()
+    net_bif=pgmpy.readwrite.BIFReader("Brain_tumor_original.bif").get_model()
     sensitivity_matrix = get_sensitivity_values(net_bif, all_condition_probabilties,marginal_outcomes)
     sensitivity_matrix.to_csv(f"heatmaps/{network_name}.csv", index=True)
     for o in marginal_outcomes:
@@ -271,16 +295,26 @@ def run_analysis(network,plots=True):
         'given':[('Sensor2','off')]
     }
     parameters = [target,[parameter_1,parameter_2]]
-    return get_all_funtions(net_xdls,parameters,plots)
+    return get_all_functions(net_xdls,parameters,plots)
     
 
 if __name__ == "__main__":
+    #generate_heatmap("Brain_tumor")
+    """
     params=[]
     #generate_heatmap('Tank')
     for i in range(0,15):
         params.append(generate_random_analysis())
-
+    """
+    params=generate_all_analysis()
    # res=run_analysis('Tank',plots=False)
-    df=format_sensitivity_table_list(params)
+    top_params = params[:100]
+
+    # Format the selected parameters
+    df = format_sensitivity_table_list(top_params)
+
+    # Save as CSV
+    df.to_csv("sensitivity_table.csv", index=False)
+
+    # Save as image
     save_table_as_image(df, "sensitivity_table.png")
-    

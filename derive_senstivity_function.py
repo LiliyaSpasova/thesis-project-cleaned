@@ -12,7 +12,6 @@ import random
 def update_cpt_with_epsilon(net,parameters,target,num_variations):
     res=[]
     value_combinations=generate_value_combinations(parameters.__len__(),num_variations)
-    print(value_combinations)
     target_node_name, target_node_value = target['probability']
     target_cpt_dict= get_cpt_dict(net, net.get_node(target_node_name))
 
@@ -155,6 +154,7 @@ def generate_labels(parameters, target):
     return labels
 
 
+
 def plot(parameters,points,evidence_available,labels,ax1,ax2=None,plots=True):
     
     if isinstance(parameters, dict):
@@ -190,68 +190,70 @@ def plot(parameters,points,evidence_available,labels,ax1,ax2=None,plots=True):
         else:
             return (plots_params,labels)
 
-def get_all_funtions(net,params,plots):
-    all_values=[]
-    # Example usage:
-    """parameter_1 = {'probability': ('ISC', 'False'),'given':[('MC','False'),('SH','True')]}
-    target = {'probability': ('ISC', 'True')}
+import matplotlib.pyplot as plt
 
-    parameters = [parameter_1]"""
+def get_all_functions(net, params, plots):
+    all_values = []
 
-    target=params[0]
-    parameters=params[1]
-    evidence_available = True if target['given'] is not None  else False
+    target = params[0]
+    parameters = params[1]
+
+    # Determine if evidence is available
+    evidence_available = 'given' in target and target['given'] is not None
+
+    # Single parameter case
     if len(parameters) == 1:
-        fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(12, 10))
         if isinstance(parameters, dict):
             parameters = [parameters]
+
         labels = generate_labels(parameters, target)
+        needed_variations = calculate_variations_needed(parameters, target)
+        points = update_cpt_with_epsilon(net, parameters, target, needed_variations)
+        points = round_point_values(points)
 
-        needed_variations=calculate_variations_needed(parameters,target)
-
-        points=update_cpt_with_epsilon(net,parameters,target,needed_variations)
-        points=round_point_values(points)
         if plots:
-            plot(parameters,points,evidence_available,labels,ax1=axes)
-            plt.tight_layout()  # Adjust layout for better visibility
+            fig, ax = plt.subplots(figsize=(12, 10))
+            plot(parameters, points, evidence_available, labels, ax1=ax)
+            plt.tight_layout()
             plt.show()
             return
         else:
-            all_values.append( plot(parameters,points,evidence_available,labels,ax1=axes,plots=plots))
+            result = plot(parameters, points, evidence_available, labels, ax1=None, plots=False)
+            all_values.append(result)
+            return all_values
 
-    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 10))
+    # Multi-parameter case (2 parameters + joint plot)
+    if plots:
+        fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(12, 10))
+        ax_3d = fig.add_subplot(2, 2, 3, projection='3d')
 
-    # Top-left: 3D plot (Ensure it's a 3D subplot)
-    ax_3d = fig.add_subplot(2, 2, 3, projection='3d')
-
-   # if len(parameters) == 1:
-    #    axes = [axes]  # Ensure axes is always a list if there's only one subplot
-
-    for i,p in enumerate(parameters):
-            
+    for i, p in enumerate(parameters):
         if isinstance(p, dict):
             p = [p]
+
         labels = generate_labels(p, target)
+        needed_variations = calculate_variations_needed(p, target)
+        points = update_cpt_with_epsilon(net, p, target, needed_variations)
+        points = round_point_values(points)
 
-        needed_variations=calculate_variations_needed(p,target)
-
-        points=update_cpt_with_epsilon(net,p,target,needed_variations)
-        points=round_point_values(points)
-        if plots:           
-            plot(p,points,evidence_available,labels,ax1=axes[0,i])
+        if plots:
+            plot(p, points, evidence_available, labels, ax1=axes[0, i])
         else:
-            all_values.append( plot(p,points,evidence_available,labels,ax1=axes[0,i],plots=plots))
+            result = plot(p, points, evidence_available, labels, ax1=None, plots=False)
+            all_values.append(result)
+
+    # Joint 3D plot
     labels = generate_labels(parameters, target)
+    needed_variations = calculate_variations_needed(parameters, target)
+    points = update_cpt_with_epsilon(net, parameters, target, needed_variations)
+    points = round_point_values(points)
 
-    needed_variations=calculate_variations_needed(parameters,target)
-
-    points=update_cpt_with_epsilon(net,parameters,target,needed_variations)
-    points=round_point_values(points)
     if plots:
-        plot(parameters,points,evidence_available,labels,ax1=ax_3d,ax2=axes[1,1],plots=plots)
-        plt.tight_layout()  # Adjust layout for better visibility
+        plot(parameters, points, evidence_available, labels, ax1=ax_3d, ax2=axes[1, 1], plots=True)
+        plt.tight_layout()
         plt.show()
         return
     else:
-        all_values.append(plot(parameters,points,evidence_available,labels,ax1=ax_3d,ax2=axes[1,1],plots=plots))
+        result = plot(parameters, points, evidence_available, labels, ax1=None, ax2=None, plots=False)
+        all_values.append(result)
         return all_values
