@@ -60,7 +60,7 @@ def round_plot_params(values, precision=4):
 def calculate_variations_needed(parameters,target):
     num_parameters=parameters.__len__()
     res=pow(2,num_parameters)
-    if target['given'] is not None:
+    if target['given'] is not None and len(target['given'])>0:
         res=res*2
     return res
 
@@ -199,7 +199,7 @@ def get_all_functions(net, params, plots):
     parameters = params[1]
 
     # Determine if evidence is available
-    evidence_available = 'given' in target and target['given'] is not None
+    evidence_available = 'given' in target and len(target['given'])>0
 
     # Single parameter case
     if len(parameters) == 1:

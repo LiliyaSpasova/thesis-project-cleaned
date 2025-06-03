@@ -1,6 +1,7 @@
 from collections import defaultdict
 import pysmile
 from generate_all_analysis import filter_all_parameter_pairs, filter_all_parameter_pairs_by_sensitivity_values, sample_params_all
+from generate_sensitivity_tables import generate_sensitivity_tables
 from load_params import load_params
 import pysmile_license
 import coefficient_calculator
@@ -259,35 +260,23 @@ def run_analysis(network,plots=True):
         net_xdls.read_file("Tank.xdsl")
     elif network=='Brain_tumor':    
         net_xdls.read_file("Brain_Tumor_original.xdsl")
-    """
+    
     parameter_1 = {
-    'probability': ('Oxigen', 'present'),
-    'given': None
+    'probability': ('B', 'False'),
+    'given': [('MC', 'False')]
     }
 
     parameter_2 = {
-        'probability': ('C_Hydrogen', 'absent'),
-        'given': [('Hydrogen','absent'),('ReacH','no'),('Explosion','no')]
+        'probability': ('CT', 'False'),
+        'given': [('B', 'False')]
     }
 
     target = {
-        'probability': ('ReacO', 'yes'),
-        'given': [('C_Sensor1','off')]
+        'probability': ('C', 'False'),
+        'given': []
     }
-    """
-    parameter_1 = {
-        'probability': ('Hydrogen', 'absent'),
-    }
-
-    parameter_2 = {
-        'probability': ('Explosion', 'yes'),
-        'given': [('Oxigen', 'absent'),('Hydrogen', 'absent')]
-    }
-
-    target = {
-        'probability': ('ReacH', 'no'),
-        'given':[('Sensor2','off')]
-    }
+    
+   
     parameters = [target,[parameter_1,parameter_2]]
     return get_all_functions(net_xdls,parameters,plots)
     
@@ -303,11 +292,15 @@ if __name__ == "__main__":
     
     net_xdls = pysmile.Network()
     net_xdls.read_file("Brain_Tumor_original.xdsl")
-    generate_all_analysis(net_xdls)
+   # res=run_analysis('Brain_tumor',False)
+   # x=5
+    
+    generate_sensitivity_tables(net_xdls)
+    """
     functions=[]
-    params=load_params('filtered_results\high.txt')
+    params=load_params('split_outputs_mid\\P(B__True)__MC__True__P(ISC__True)__MC__True.txt')
     for par in params:
-       functions.append(get_all_functions(net_xdls,par,plots=False))
+       functions.append((par[2],get_all_functions(net_xdls,par,plots=False)))
     df = format_sensitivity_table_list(functions)
 
     # Save as CSV
@@ -315,3 +308,5 @@ if __name__ == "__main__":
 
     # Save as image
     save_table_as_image(df, "sensitivity_table.png")
+    """
+    

@@ -11,19 +11,40 @@ def format_sensitivity_table_list(dataset):
     """
     
     def format_single(coeffs):
-        a, b, c, d = np.round(coeffs, 2)
-        return f"({a}·x + {b})/({c}·x + {d})"
+        coeffs = np.round(coeffs, 2)
+        if len(coeffs) == 4:
+            a, b, c, d = coeffs
+            return f"({a}·x + {b})/({c}·x + {d})"
+        elif len(coeffs) == 2:
+            a, b = coeffs
+            return f"{a}·x + {b}"
+        else:
+            return "Invalid format"
 
     def format_two_way(coeffs):
-        num = np.round(coeffs[:4], 2)
-        den = np.round(coeffs[4:], 2)
-        num_str = f"({num[0]}·x + {num[1]}·y + {num[2]}·xy + {num[3]})"
-        den_str = f"({den[0]}·x + {den[1]}·y + {den[2]}·xy + {den[3]})"
-        return f"{num_str} / {den_str}"
+        coeffs = np.round(coeffs, 2)
+        
+        if len(coeffs) == 8:
+            num = coeffs[:4]
+            den = coeffs[4:]
+            num_str = f"({num[0]}·xy + {num[1]}·x + {num[2]}.y + {num[3]})"
+            den_str = f"({den[0]}·xy + {den[1]}·x + {den[2]}·y + {den[3]})"
+            return f"{num_str} / {den_str}"
+        
+        elif len(coeffs) == 4:
+            num = coeffs
+            num_str = f"({num[0]}·xy + {num[1]}·x + {num[2]}·y + {num[3]})"
+            return f"{num_str}"
+        
+        else:
+            return "Invalid format"
+
     
     rows = []
 
     for entry in dataset:
+        sens_val=entry[0]
+        entry=entry[1]
         if entry is None or len(entry) != 3:
             continue  # Skip invalid entries
 
@@ -40,6 +61,7 @@ def format_sensitivity_table_list(dataset):
         rows.append({
             "Param1": param1,
             "Param2": param2,
+            "Sensitivity value":sens_val,
             "Target": target,
             "Sens Function 1": sens_func1,
             "Sens Function 2": sens_func2,
