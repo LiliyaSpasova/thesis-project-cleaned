@@ -5,9 +5,9 @@ import os
 
 def generate_sensitivity_tables(net_xdls):
 
-    input_folder="split_outputs_high"
-    csv_output_folder="high_sensitivity_csv"
-    png_output_folder="high_sensitivity_png"
+    input_folder="split_outputs_high_with_evidence_grouped_by_evidence"
+    csv_output_folder="split_outputs_high_with_evidence_grouped_by_evidence_csv"
+    png_output_folder="split_outputs_high_with_evidence_grouped_by_evidence_png"
     os.makedirs(csv_output_folder, exist_ok=True)
     os.makedirs(png_output_folder, exist_ok=True)
 
@@ -21,7 +21,5 @@ def generate_sensitivity_tables(net_xdls):
             df = format_sensitivity_table_list(functions)
 
             csv_path = os.path.join(csv_output_folder, f"{base_name}.csv")
-            png_path = os.path.join(png_output_folder, f"{base_name}.png")
 
             df.to_csv(csv_path, index=False)
-            save_table_as_image(df, png_path)

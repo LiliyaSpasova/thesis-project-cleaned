@@ -1,0 +1,9 @@
+Param1,Param2,Sensitivity value,Target,Sens Function 1,Sens Function 2,Two-way Sens Function
+P(-ISC|-MC),P(C|B^-ISC),0.57,P(MC),-0.0·x + 0.2,0.0·x + 0.2,(-0.01·xy + 0.01·x + 0.0·y + 0.2)
+P(-ISC|-MC),P(C|B^-ISC),0.57,P(-MC),-0.0·x + 0.8,-0.0·x + 0.8,(-0.0·xy + -0.0·x + -0.0·y + 0.8)
+P(-ISC|-MC),P(C|B^-ISC),0.57,P(B),0.0·x + 0.36,0.0·x + 0.36,(0.0·xy + 0.0·x + 0.0·y + 0.36)
+P(-ISC|-MC),P(C|B^-ISC),0.57,P(-B),-0.0·x + 0.64,0.0·x + 0.64,(0.0·xy + -0.0·x + -0.0·y + 0.64)
+P(-ISC|-MC),P(C|B^-ISC),0.57,P(SH),0.0·x + 0.67,-0.0·x + 0.67,(0.0·xy + -0.0·x + -0.0·y + 0.67)
+P(-ISC|-MC),P(C|B^-ISC),0.57,P(-SH),-0.0·x + 0.33,0.0·x + 0.33,(-0.0·xy + 0.0·x + -0.0·y + 0.33)
+P(-ISC|-MC),P(C|B^-ISC),0.57,P(CT),-0.0·x + 0.59,0.0·x + 0.59,(0.0·xy + -0.0·x + -0.0·y + 0.59)
+P(-ISC|-MC),P(C|B^-ISC),0.57,P(-CT),-0.0·x + 0.41,0.0·x + 0.41,(-0.0·xy + -0.0·x + -0.0·y + 0.41)
